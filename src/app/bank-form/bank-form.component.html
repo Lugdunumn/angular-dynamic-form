@@ -1,0 +1,35 @@
+{{bankForm.value | json}}
+<form [formGroup]="bankForm" class="col-12">
+  <div class="form-group">
+    <div class="form-row">
+      <label class="col-5 col-form-label" for="bank-list">Banque</label>
+      <select id="bank-list"
+              style="width: 100%;"
+              class="col-7 form-control"
+              [(ngModel)]="bankId" [ngModelOptions]="{standalone: true}"
+              (change)="onUserChangeBank()">
+        <option [disabled]="true" [value]="null" selected="selected">Veuillez choisir une banque</option>
+        <option *ngFor="let bank of banksList$ | async;" style="min-width: 5rem;" [value]="bank?.id">
+          {{bank?.name}}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngFor="let ff of formFields$ | async" class="form-group">
+    <ng-container *ngIf="bankForm.controls.hasOwnProperty(ff.name)">
+      <div class="form-row" [ngSwitch]="ff.type">
+        <label class="col-5 col-form-label" for="{{ff?.name}}">{{ff?.label}}</label>
+
+        <input id="{{ff?.name}}" class="col-7 form-control" [type]="ff.type" *ngSwitchCase="enumService.FormType.TEXT" [name]="ff?.name" [formControlName]="ff?.name">
+
+        <input id="{{ff?.name}}" class="col-7 form-control" [type]="ff.type" *ngSwitchCase="enumService.FormType.PASSWORD" [name]="ff?.name" [formControlName]="ff?.name">
+
+        <select id="{{ff?.name}}" class="col-7 form-control" *ngSwitchCase="enumService.FormType.LIST" [name]="ff?.name" [formControlName]="ff?.name">
+          <option *ngFor="let item of ff.values" [value]="item.value">{{item.label}}</option>
+        </select>
+      </div>
+    </ng-container>
+  </div>
+  <div class="clearfix"></div>
+</form>
