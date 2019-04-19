@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/banks', pathMatch: 'full'},
+  { path: '', redirectTo: '/bank', pathMatch: 'full'},
   {
-    path: 'banks',
-    loadChildren: './bank-list/bank-list.module#BankListModule'
+    path: 'bank',
+    loadChildren: './bank/bank.module#BankModule'
   }
 ];
 

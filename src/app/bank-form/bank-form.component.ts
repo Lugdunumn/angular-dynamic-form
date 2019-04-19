@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { BankService } from '../service/bank.service';
-import { Bank } from '../model/banks.interface';
 import { Subject } from 'rxjs';
 import { Field } from '../model/bank-fields.interface';
 import { EnumService } from '../service/enum.service';
@@ -12,11 +11,8 @@ import { EnumService } from '../service/enum.service';
   styleUrls: ['./bank-form.component.scss']
 })
 export class BankFormComponent implements OnInit {
+  @Input()formFields$: Subject<Field[]> = new Subject();
   bankForm: FormGroup = this.fb.group({});
-  bankId: number = null;
-
-  banksList$: Subject<Bank[]> = new Subject();
-  formFields$: Subject<Field[]> = new Subject();
 
   constructor(
     private bankService: BankService,
@@ -25,26 +21,7 @@ export class BankFormComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.bankService.getBanks()
-      .pipe()
-      .subscribe(
-        banksList => {
-          this.banksList$.next(banksList.banks);
-        },
-        err => {
-          console.error('Erreur de récupération des banques.');
-        },
-        () => {
-        }
-      );
-
-    this.banksList$
-      .subscribe(
-        banksList => {
-          console.log('banksList loaded');
-        }
-      );
-
+    this.bankForm.disable();
     this.formFields$
       .subscribe(
         formFields => {
@@ -55,7 +32,8 @@ export class BankFormComponent implements OnInit {
   }
 
   refreshBankForm(formFields: Field[]) {
-    this.bankForm.reset();
+    this.bankForm = this.fb.group({})
+
     for (const ff of formFields) {
       const validatorsFns: ValidatorFn[] = [];
       if (ff.regex) {
@@ -72,27 +50,18 @@ export class BankFormComponent implements OnInit {
         )
       );
     }
+    if (this.bankForm.disabled) {
+      this.bankForm.enable();
+    }
     console.log(this.bankForm.controls);
   }
 
-  getBankFieldsById(id: number) {
-    this.bankService.getBankFieldsById(id)
-      .pipe()
-      .subscribe(
-        fieldsList => {
-          this.formFields$.next(fieldsList.fields);
-        },
-        err => {
-          console.error('Erreur de récupération de données de la banque.');
-        },
-        () => {
-        }
-      );
+  submitForm() {
+    if (this.bankForm.errors) {
+      return;
+    } else {
+      // do stuff
+      window.alert('Submit bank form : ' + JSON.stringify(this.bankForm.value));
+    }
   }
-
-  onUserChangeBank() {
-    console.log(this.bankId);
-    this.getBankFieldsById(this.bankId);
-  }
-
 }

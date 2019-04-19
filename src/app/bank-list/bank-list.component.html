@@ -1,1 +1,17 @@
-<app-bank-form></app-bank-form>
+<form [formGroup]="bankListForm">
+  <div class="form-group">
+    <div class="form-row">
+      <label class="col-5 col-form-label" for="bank-list">Banque</label>
+      <select id="bank-list"
+              style="width: 100%;"
+              class="col-7 form-control"
+              [formControlName]="'bankId'"
+              (change)="onUserChangeBank()">
+        <option [disabled]="true" [value]="null" selected="selected">Sélectionner votre banque</option>
+        <option *ngFor="let bank of banksList$ | async;" style="min-width: 5rem;" [value]="bank?.id">
+          {{bank?.name}}
+        </option>
+      </select>
+    </div>
+  </div>
+</form>
