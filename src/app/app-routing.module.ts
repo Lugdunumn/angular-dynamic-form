@@ -5,7 +5,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/bank', pathMatch: 'full'},
   {
     path: 'bank',
-    loadChildren: './bank/bank.module#BankModule'
+    loadChildren: () => import('./bank/bank.module').then(m => m.BankModule)
   }
 ];
 
